@@ -11,12 +11,12 @@ from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.db import models
 from django.http import Http404, HttpResponseRedirect
 from django.template.response import TemplateResponse
-from django.urls import RegexURLResolver
 from django.utils.encoding import force_text
 from django.utils.http import urlencode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+from polymorphic.compat import URLResolver
 from polymorphic.utils import get_base_polymorphic_model
 from .forms import PolymorphicModelChoiceForm
 
@@ -265,7 +265,7 @@ class PolymorphicParentModelAdmin(admin.ModelAdmin):
             ct_id = self.model.objects.values_list('polymorphic_ctype_id', flat=True).get(pk=object_id)
 
         real_admin = self._get_real_admin_by_ct(ct_id)
-        resolver = RegexURLResolver('^', real_admin.urls)
+        resolver = URLResolver('^', real_admin.urls)
         resolvermatch = resolver.resolve(path)  # May raise Resolver404
         if not resolvermatch:
             raise Http404("No match for path '{0}' in admin subclass.".format(path))
