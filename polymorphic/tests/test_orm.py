@@ -940,17 +940,3 @@ class PolymorphicTests(TransactionTestCase):
 
         with self.assertRaises(PolymorphicTypeUndefined):
             list(Model2A.objects.all())
-
-
-def qrepr(data):
-    """
-    Ensure consistent repr() output for the QuerySet object.
-    """
-    if isinstance(data, QuerySet):
-        if django.VERSION < (1, 11):
-            # Django 1.10 still shows "<QuerySet [", not taking the actual type into account.
-            return '<{0} {1}'.format(data.__class__.__name__, repr(data)[10:])
-        else:
-            return repr(data)
-
-    return repr(data)
