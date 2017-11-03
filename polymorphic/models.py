@@ -10,6 +10,7 @@ from django.db.utils import DEFAULT_DB_ALIAS
 from django.utils import six
 
 from .base import PolymorphicModelBase
+from .compat import DJANGO_GTE_2
 from .managers import PolymorphicManager
 from .query_translate import translate_polymorphic_Q_object
 
@@ -50,14 +51,14 @@ class PolymorphicModel(six.with_metaclass(PolymorphicModelBase, models.Model)):
     # some applications want to know the name of the fields that are added to its models
     polymorphic_internal_model_fields = ['polymorphic_ctype']
 
-    # Note that Django 1.5 removes these managers because the model is abstract.
-    # They are pretended to be there by the metaclass in PolymorphicModelBase.get_inherited_managers()
     objects = PolymorphicManager()
     base_objects = models.Manager()
 
     class Meta:
         abstract = True
         base_manager_name = "objects"
+        if not DJANGO_GTE_2:
+            manager_inheritance_from_future = True
 
     @classmethod
     def translate_polymorphic_Q_object(cls, q):
